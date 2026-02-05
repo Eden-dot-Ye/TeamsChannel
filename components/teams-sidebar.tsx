@@ -18,22 +18,27 @@ export function TeamsSidebar({
   onChannelSelect,
 }: TeamsSidebarProps) {
   return (
-    <div className="w-64 h-full bg-muted/30 border-r border-border flex flex-col">
+    <div className="w-64 h-full bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col">
       {/* Team header */}
-      <div className="p-4 border-b border-border">
-        <button className="w-full flex items-center justify-between hover:bg-muted/50 rounded px-2 py-1.5 transition-colors">
-          <span className="font-semibold text-sm text-foreground">Development Team</span>
+      <div className="p-4 border-b border-sidebar-border">
+        <button className="w-full flex items-center justify-between hover:bg-sidebar-accent rounded px-2 py-1.5 transition-colors">
+          <div className="flex items-center gap-2">
+            <div className="h-7 w-7 rounded-md bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center text-xs font-semibold">
+              DC
+            </div>
+            <span className="font-semibold text-sm">Development Team</span>
+          </div>
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </button>
       </div>
 
       {/* Search */}
-      <div className="p-3 border-b border-border">
+      <div className="p-3 border-b border-sidebar-border">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search"
-            className="pl-8 h-8 bg-background/50 border-border/50"
+            className="pl-8 h-8 bg-background border-border/60"
           />
         </div>
       </div>
@@ -58,8 +63,8 @@ export function TeamsSidebar({
                 className={cn(
                   'w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm transition-colors',
                   currentChannelId === channel.id
-                    ? 'bg-primary/10 text-primary font-semibold'
-                    : 'text-foreground/80 hover:bg-muted/50 hover:text-foreground'
+                    ? 'bg-sidebar-accent text-foreground font-semibold'
+                    : 'text-foreground/80 hover:bg-sidebar-accent hover:text-foreground'
                 )}
               >
                 <Hash className="h-4 w-4 flex-shrink-0" />
@@ -71,7 +76,7 @@ export function TeamsSidebar({
       </div>
 
       {/* Powered by AI */}
-      <div className="p-3 border-t border-border">
+      <div className="p-3 border-t border-sidebar-border">
         <div className="text-xs text-muted-foreground text-center">
           Powered by AI Chatbot ACE
         </div>
