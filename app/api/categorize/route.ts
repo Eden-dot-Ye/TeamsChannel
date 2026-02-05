@@ -15,10 +15,10 @@ console.log('[v0] Route file loaded')
 export async function POST(req: Request) {
 
   try {
-    const apiKey = "AKD90FeRqMadoZ4IUrgMTesRrnINx11yYUzxFRBKY9gUMFV3LxnfJQQJ99BHACYeBjFXJ3w3AAABACOG9OkS";
-    const endpoint = "https://edenailab.openai.azure.com";
-    const apiVersion = "2025-01-01-preview";
-    const deployment = "o3-mini";
+    const apiKey = process.env.AZURE_OPENAI_API_KEY;
+    const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const apiVersion = process.env.AZURE_OPENAI_API_VERSION;
+    const deployment = process.env.AZURE_OPENAI_DEPLOYMENT_NAME;
 
     if (!apiKey || !endpoint || !apiVersion || !deployment) {
       console.error('[v0] Missing Azure OpenAI Environment Variables:', {
