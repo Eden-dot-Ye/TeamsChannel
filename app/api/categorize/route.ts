@@ -4,6 +4,11 @@ import { NextResponse } from 'next/server'
 
 let client: AzureOpenAI | null = null;
 
+function getFallbackCategoryId(categories: any[]): string | null {
+  if (!Array.isArray(categories) || categories.length === 0) return null;
+  return String(categories[0].id);
+}
+
 const categorySchema = z.object({
   categoryId: z.string().describe('The ID of the most appropriate category'),
   confidence: z.number().min(0).max(1).describe('Confidence score between 0 and 1'),
@@ -13,7 +18,7 @@ const categorySchema = z.object({
 console.log('[v0] Route file loaded') 
 
 export async function POST(req: Request) {
-
+  let categories: any[] = [];
   try {
     const apiKey = process.env.AZURE_OPENAI_API_KEY;
     const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
@@ -43,7 +48,9 @@ export async function POST(req: Request) {
       });
     }
 
-    const { message, categories } = await req.json()
+    const { message, categories: incomingCategories } = await req.json()
+
+    categories = Array.isArray(incomingCategories) ? incomingCategories : [];
 
     console.log('[v0] Categories received:', categories)
 
@@ -94,6 +101,17 @@ Respond with a JSON object matching this schema:
     console.log('[v0] Categorization result:', parsed)
 
     const object = categorySchema.parse(parsed)
+    const matched = categories.find((cat: any) => String(cat.id) === String(object.categoryId))
+    if (!matched) {
+      const fallbackId = getFallbackCategoryId(categories)
+      if (fallbackId) {
+        return NextResponse.json({
+          categoryId: fallbackId,
+          confidence: 0,
+          reasoning: 'Fallback category assigned due to unknown category ID.',
+        })
+      }
+    }
 
     return NextResponse.json(object)
 
@@ -103,6 +121,15 @@ Respond with a JSON object matching this schema:
     if (error.response) {
        console.error(error.response.status);
        console.error(error.response.data);
+    }
+
+    const fallbackId = getFallbackCategoryId(categories)
+    if (fallbackId) {
+      return NextResponse.json({
+        categoryId: fallbackId,
+        confidence: 0,
+        reasoning: 'Fallback category assigned due to classification error.',
+      })
     }
 
     return NextResponse.json(
